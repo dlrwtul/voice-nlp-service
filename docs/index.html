@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice NLP Service — Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sidebar-w: 268px;
+      --toc-w: 220px;
+      --header-h: 56px;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --transition: 150ms ease;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    /* Dark theme (default) */
+    [data-theme="dark"] {
+      --bg-base:     #0E0F12;
+      --bg-sidebar:  #0A0B0E;
+      --bg-card:     #141619;
+      --bg-card-hover: #1A1D24;
+      --bg-code:     #12141A;
+      --bg-inline:   #1E212B;
+      --bg-tip:      #0D1F2D;
+      --bg-warn:     #1F1A0D;
+      --bg-danger:   #1F0D0D;
+      --border:      #1E2128;
+      --border-strong: #2E3240;
+      --text-primary: #E8E9EF;
+      --text-secondary: #9399B2;
+      --text-muted:  #5C6278;
+      --text-code:   #A9B1D6;
+      --accent:      #7C7FFF;
+      --accent-bg:   #1A1B3A;
+      --accent-hover:#9B9EFF;
+      --tip-border:  #2A4A6E;
+      --warn-border: #4A3A0D;
+      --danger-border:#4A1010;
+      --scrollbar:   #2A2D38;
+      --tag-bg:      #1E2128;
+      --tag-get:     #0D2D1A;
+      --tag-get-text:#34D399;
+      --tag-post:    #0D1A2D;
+      --tag-post-text:#60A5FA;
+      --badge-bg:    #1E2878;
+      --badge-text:  #818CF8;
+    }
+
+    /* Light theme */
+    [data-theme="light"] {
+      --bg-base:     #FFFFFF;
+      --bg-sidebar:  #F7F8FA;
+      --bg-card:     #F9FAFB;
+      --bg-card-hover: #F0F2F5;
+      --bg-code:     #F4F5F7;
+      --bg-inline:   #EEF0F5;
+      --bg-tip:      #EFF8FF;
+      --bg-warn:     #FFFBEB;
+      --bg-danger:   #FEF2F2;
+      --border:      #E8EAED;
+      --border-strong: #D0D5DD;
+      --text-primary: #1A1D2E;
+      --text-secondary: #4B5263;
+      --text-muted:  #8B91A8;
+      --text-code:   #383A42;
+      --accent:      #5B5FEF;
+      --accent-bg:   #EEF0FF;
+      --accent-hover:#4A4ECC;
+      --tip-border:  #93C5FD;
+      --warn-border: #FCD34D;
+      --danger-border:#FCA5A5;
+      --scrollbar:   #D0D5DD;
+      --tag-bg:      #F0F2F5;
+      --tag-get:     #D1FAE5;
+      --tag-get-text:#065F46;
+      --tag-post:    #DBEAFE;
+      --tag-post-text:#1E40AF;
+      --badge-bg:    #EEF2FF;
+      --badge-text:  #4338CA;
+    }
+
+    html { font-size: 15px; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Scrollbar ───────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 99px; }
+
+    /* ─── Layout ──────────────────────────────────────────────────── */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ─── Sidebar ─────────────────────────────────────────────────── */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      z-index: 100; overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 20px;
+      height: var(--header-h);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: linear-gradient(135deg, #7C7FFF 0%, #A78BFA 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .logo-text { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .logo-badge {
+      margin-left: auto; font-size: 10px; font-weight: 600;
+      background: var(--badge-bg); color: var(--badge-text);
+      padding: 2px 7px; border-radius: 99px;
+    }
+
+    .sidebar-search {
+      margin: 12px 12px 4px;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg-inline); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 7px 11px;
+      cursor: pointer; transition: border-color var(--transition);
+    }
+    .sidebar-search:hover { border-color: var(--border-strong); }
+    .sidebar-search svg { flex-shrink: 0; color: var(--text-muted); }
+    .sidebar-search span { font-size: 13px; color: var(--text-muted); flex: 1; }
+    .sidebar-search kbd {
+      font-size: 10px; font-family: var(--font-sans);
+      background: var(--bg-card); border: 1px solid var(--border-strong);
+      border-radius: 4px; padding: 1px 5px; color: var(--text-muted);
+    }
+
+    .sidebar-nav { flex: 1; padding: 8px 0 24px; }
+
+    .nav-section { margin-top: 4px; }
+    .nav-section-title {
+      font-size: 11px; font-weight: 600; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 6px 20px 4px; margin-top: 12px;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 6px 20px; margin: 1px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px; color: var(--text-secondary);
+      cursor: pointer; text-decoration: none;
+      transition: background var(--transition), color var(--transition);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .nav-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+    .nav-item.active {
+      background: var(--accent-bg); color: var(--accent);
+      font-weight: 500;
+    }
+    .nav-item svg { flex-shrink: 0; opacity: .7; }
+    .nav-item.active svg { opacity: 1; }
+
+    .nav-sub { padding-left: 16px; }
+    .nav-sub .nav-item { font-size: 13px; }
+
+    /* ─── Header ──────────────────────────────────────────────────── */
+    .main-wrap {
+      margin-left: var(--sidebar-w);
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+    }
+
+    .top-bar {
+      position: sticky; top: 0; z-index: 50;
+      height: var(--header-h);
+      background: var(--bg-base);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 32px 0 28px; gap: 16px;
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .breadcrumb span { color: var(--text-secondary); }
+    .breadcrumb .sep { opacity: .4; }
+
+    .top-bar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+    .theme-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 5px 10px;
+      font-size: 12px; color: var(--text-secondary);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .theme-btn:hover { border-color: var(--border-strong); color: var(--text-primary); }
+
+    .github-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 5px 11px;
+      font-size: 12px; font-weight: 500; color: var(--text-secondary);
+      cursor: pointer; text-decoration: none;
+      transition: all var(--transition);
+    }
+    .github-btn:hover { border-color: var(--border-strong); color: var(--text-primary); }
+
+    /* ─── Content ─────────────────────────────────────────────────── */
+    .content-wrap {
+      display: flex; align-items: flex-start;
+      max-width: 1100px; margin: 0 auto; width: 100%;
+      padding: 0 32px 80px 28px; gap: 48px;
+    }
+    .content { flex: 1; min-width: 0; padding-top: 40px; }
+
+    /* ─── Typography ──────────────────────────────────────────────── */
+    .content h1 {
+      font-size: 2rem; font-weight: 700; line-height: 1.25;
+      color: var(--text-primary); margin-bottom: 16px;
+      letter-spacing: -.025em;
+    }
+    .content h2 {
+      font-size: 1.25rem; font-weight: 600; line-height: 1.35;
+      color: var(--text-primary); margin: 40px 0 14px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border);
+      letter-spacing: -.015em;
+      scroll-margin-top: calc(var(--header-h) + 16px);
+    }
+    .content h3 {
+      font-size: 1rem; font-weight: 600; color: var(--text-primary);
+      margin: 28px 0 10px; letter-spacing: -.01em;
+      scroll-margin-top: calc(var(--header-h) + 16px);
+    }
+    .content p { color: var(--text-secondary); margin-bottom: 14px; }
+    .content a { color: var(--accent); text-decoration: none; }
+    .content a:hover { color: var(--accent-hover); text-decoration: underline; }
+    .content ul, .content ol { padding-left: 22px; margin-bottom: 14px; }
+    .content li { color: var(--text-secondary); margin-bottom: 5px; }
+    .content strong { color: var(--text-primary); font-weight: 600; }
+
+    /* ─── Lead / Subtitle ─────────────────────────────────────────── */
+    .lead {
+      font-size: 1.05rem; color: var(--text-secondary);
+      line-height: 1.7; margin-bottom: 32px;
+    }
+
+    /* ─── Inline code ─────────────────────────────────────────────── */
+    code {
+      font-family: var(--font-mono);
+      font-size: .8em; background: var(--bg-inline);
+      color: var(--accent); border-radius: 4px;
+      padding: 2px 6px;
+    }
+
+    /* ─── Code block ──────────────────────────────────────────────── */
+    .code-block {
+      position: relative; margin: 18px 0;
+      background: var(--bg-code); border: 1px solid var(--border);
+      border-radius: var(--radius-md); overflow: hidden;
+    }
+    .code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 16px;
+      background: var(--bg-inline); border-bottom: 1px solid var(--border);
+    }
+    .code-lang {
+      font-size: 11px; font-family: var(--font-mono); font-weight: 500;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em;
+    }
+    .copy-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: none; border: 1px solid var(--border);
+      border-radius: 5px; padding: 3px 9px;
+      font-size: 11px; color: var(--text-muted); cursor: pointer;
+      transition: all var(--transition); font-family: var(--font-sans);
+    }
+    .copy-btn:hover { border-color: var(--border-strong); color: var(--text-secondary); }
+    .copy-btn.copied { border-color: #34D399; color: #34D399; }
+    .code-block pre {
+      padding: 16px; overflow-x: auto;
+      font-size: .82rem; line-height: 1.7;
+      font-family: var(--font-mono);
+      color: var(--text-code);
+    }
+
+    /* Syntax highlights */
+    .t-kw  { color: #C678DD; }
+    .t-str { color: #98C379; }
+    .t-num { color: #E06C75; }
+    .t-fn  { color: #61AFEF; }
+    .t-cm  { color: #5C6370; font-style: italic; }
+    .t-key { color: #E5C07B; }
+    .t-punc{ color: #ABB2BF; }
+    .t-url { color: #56B6C2; }
+    .t-bool{ color: #D19A66; }
+
+    /* ─── Callouts ────────────────────────────────────────────────── */
+    .callout {
+      display: flex; gap: 13px; align-items: flex-start;
+      padding: 14px 16px; border-radius: var(--radius-md);
+      margin: 18px 0; border-left: 3px solid;
+    }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; }
+    .callout-body strong { color: var(--text-primary); }
+    .callout.tip    { background: var(--bg-tip);    border-color: var(--tip-border);    }
+    .callout.warn   { background: var(--bg-warn);   border-color: var(--warn-border);   }
+    .callout.danger { background: var(--bg-danger); border-color: var(--danger-border); }
+
+    /* ─── Cards ───────────────────────────────────────────────────── */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 20px 0; }
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 18px;
+      text-decoration: none; cursor: pointer;
+      transition: all var(--transition);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .card:hover {
+      background: var(--bg-card-hover); border-color: var(--border-strong);
+      transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.15);
+    }
+    .card-icon {
+      width: 36px; height: 36px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; margin-bottom: 4px;
+    }
+    .card-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+    .card-desc  { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+    .card-arrow { margin-top: auto; font-size: 12px; color: var(--accent); }
+
+    /* ─── Method tags ─────────────────────────────────────────────── */
+    .endpoint-block {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); margin: 18px 0; overflow: hidden;
+    }
+    .endpoint-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 18px; border-bottom: 1px solid var(--border);
+      background: var(--bg-inline);
+    }
+    .method-tag {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em;
+      padding: 3px 9px; border-radius: 5px; font-family: var(--font-mono);
+    }
+    .method-get  { background: var(--tag-get);  color: var(--tag-get-text);  }
+    .method-post { background: var(--tag-post); color: var(--tag-post-text); }
+    .endpoint-path {
+      font-family: var(--font-mono); font-size: 14px;
+      color: var(--text-primary); font-weight: 500;
+    }
+    .endpoint-desc {
+      font-size: 13px; color: var(--text-muted); margin-left: auto;
+    }
+    .endpoint-body { padding: 16px 18px; }
+    .endpoint-body p { font-size: 13.5px; margin-bottom: 10px; }
+
+    /* ─── Param table ─────────────────────────────────────────────── */
+    .param-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+    .param-table th {
+      text-align: left; padding: 8px 12px;
+      font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--text-muted); border-bottom: 1px solid var(--border);
+    }
+    .param-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+    .param-table tr:last-child td { border-bottom: none; }
+    .param-table tr:hover td { background: var(--bg-card-hover); }
+    .badge-req  { font-size: 10px; font-weight: 600; background: var(--badge-bg); color: var(--badge-text); padding: 2px 6px; border-radius: 4px; }
+    .badge-opt  { font-size: 10px; font-weight: 600; background: var(--tag-bg);   color: var(--text-muted);  padding: 2px 6px; border-radius: 4px; }
+
+    /* ─── Field type chip ─────────────────────────────────────────── */
+    .chip {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-family: var(--font-mono); font-weight: 500;
+      background: var(--bg-inline); color: var(--text-code);
+      border-radius: 4px; padding: 2px 7px;
+    }
+
+    /* ─── Steps ───────────────────────────────────────────────────── */
+    .steps { margin: 20px 0; }
+    .step { display: flex; gap: 16px; margin-bottom: 28px; }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent-bg); border: 1.5px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--accent);
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .step-body { flex: 1; }
+    .step-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+    .step-body p { font-size: 13.5px; margin-bottom: 8px; }
+
+    /* ─── Table of Contents ───────────────────────────────────────── */
+    .toc {
+      position: sticky; top: calc(var(--header-h) + 24px);
+      width: var(--toc-w); flex-shrink: 0; padding-top: 40px;
+    }
+    .toc-title {
+      font-size: 11px; font-weight: 600; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+    }
+    .toc-list { list-style: none; padding: 0; }
+    .toc-list li { margin-bottom: 2px; }
+    .toc-list a {
+      font-size: 12.5px; color: var(--text-muted); text-decoration: none;
+      display: block; padding: 4px 8px; border-radius: 5px;
+      border-left: 2px solid transparent;
+      transition: all var(--transition);
+    }
+    .toc-list a:hover { color: var(--text-secondary); background: var(--bg-card); }
+    .toc-list a.toc-active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-bg); }
+    .toc-list .toc-sub a { padding-left: 20px; }
+
+    /* ─── Divider ─────────────────────────────────────────────────── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+    /* ─── Page nav ────────────────────────────────────────────────── */
+    .page-nav { display: flex; gap: 12px; margin-top: 48px; }
+    .page-nav-btn {
+      flex: 1; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 14px 18px;
+      text-decoration: none; transition: all var(--transition);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .page-nav-btn:hover { border-color: var(--accent); background: var(--accent-bg); }
+    .page-nav-btn.next { text-align: right; }
+    .page-nav-label { font-size: 11px; color: var(--text-muted); }
+    .page-nav-title { font-size: 13.5px; font-weight: 600; color: var(--accent); }
+
+    /* ─── Sections (SPA) ──────────────────────────────────────────── */
+    .section { display: none; }
+    .section.visible { display: block; }
+
+    /* ─── Hero banner ─────────────────────────────────────────────── */
+    .hero-banner {
+      background: linear-gradient(135deg, #1A1B3A 0%, #0E0F20 50%, #0E1220 100%);
+      border: 1px solid #2A2D50; border-radius: var(--radius-lg);
+      padding: 32px; margin-bottom: 32px;
+      display: flex; align-items: center; gap: 24px;
+    }
+    .hero-icon {
+      width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+      background: linear-gradient(135deg, #7C7FFF, #A78BFA);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+    }
+    .hero-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -.02em; margin-bottom: 6px; }
+    .hero-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+    .hero-version {
+      margin-left: auto; background: var(--badge-bg); color: var(--badge-text);
+      font-size: 12px; font-weight: 600; padding: 5px 12px;
+      border-radius: 99px; flex-shrink: 0; align-self: flex-start;
+    }
+
+    /* ─── Search modal ────────────────────────────────────────────── */
+    .search-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
+      display: none; align-items: flex-start; justify-content: center;
+      padding-top: 80px;
+    }
+    .search-overlay.open { display: flex; }
+    .search-modal {
+      background: var(--bg-card); border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg); width: 560px; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,.5);
+    }
+    .search-input-wrap {
+      display: flex; align-items: center; gap: 10px; padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .search-input-wrap svg { color: var(--text-muted); flex-shrink: 0; }
+    .search-input {
+      flex: 1; background: none; border: none; outline: none;
+      font-size: 15px; color: var(--text-primary); font-family: var(--font-sans);
+    }
+    .search-results { max-height: 380px; overflow-y: auto; }
+    .search-result-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 18px; cursor: pointer;
+      transition: background var(--transition); text-decoration: none;
+    }
+    .search-result-item:hover { background: var(--bg-card-hover); }
+    .search-result-icon { font-size: 14px; color: var(--text-muted); }
+    .search-result-title { font-size: 13.5px; color: var(--text-primary); }
+    .search-result-section { font-size: 12px; color: var(--text-muted); }
+    .search-empty { padding: 24px; text-align: center; font-size: 13.5px; color: var(--text-muted); }
+
+    /* ─── Responsive ──────────────────────────────────────────────── */
+    @media (max-width: 1100px) { .toc { display: none; } }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); transition: transform var(--transition); }
+      .sidebar.open { transform: translateX(0); }
+      .main-wrap { margin-left: 0; }
+      .content-wrap { padding: 0 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Search overlay -->
+<div class="search-overlay" id="searchOverlay" onclick="closeSearch(event)">
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" id="searchInput" placeholder="Search documentation…" oninput="filterSearch(this.value)" />
+      <kbd style="font-size:11px;font-family:var(--font-sans);background:var(--bg-inline);border:1px solid var(--border-strong);border-radius:4px;padding:2px 6px;color:var(--text-muted)">Esc</kbd>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ─── Sidebar ─────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-logo" href="#" onclick="navigate('overview')">
+      <div class="logo-icon">V</div>
+      <span class="logo-text">Voice NLP</span>
+      <span class="logo-badge">v1.0</span>
+    </a>
+
+    <div class="sidebar-search" onclick="openSearch()">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <span>Search…</span>
+      <kbd>⌘K</kbd>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Getting Started</div>
+        <a class="nav-item active" id="nav-overview" onclick="navigate('overview')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Overview
+        </a>
+        <a class="nav-item" id="nav-quickstart" onclick="navigate('quickstart')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Quickstart
+        </a>
+        <a class="nav-item" id="nav-installation" onclick="navigate('installation')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Installation
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Core Concepts</div>
+        <a class="nav-item" id="nav-schema" onclick="navigate('schema')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Extraction Schema
+        </a>
+        <a class="nav-item" id="nav-pipeline" onclick="navigate('pipeline')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Pipeline
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">API Reference</div>
+        <a class="nav-item" id="nav-api-transcribe" onclick="navigate('api-transcribe')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          POST /v1/transcribe
+        </a>
+        <a class="nav-item" id="nav-api-extract" onclick="navigate('api-extract')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          POST /v1/extract
+        </a>
+        <a class="nav-item" id="nav-api-pipeline" onclick="navigate('api-full')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          POST /v1/voice-to-json
+        </a>
+        <a class="nav-item" id="nav-api-health" onclick="navigate('api-health')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          GET /health
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Examples</div>
+        <a class="nav-item" id="nav-ex-transport" onclick="navigate('ex-transport')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          Transport (Faypass)
+        </a>
+        <a class="nav-item" id="nav-ex-ecommerce" onclick="navigate('ex-ecommerce')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          E-commerce
+        </a>
+        <a class="nav-item" id="nav-ex-hr" onclick="navigate('ex-hr')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          HR / Leave Requests
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Configuration</div>
+        <a class="nav-item" id="nav-config" onclick="navigate('config')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          Environment
+        </a>
+        <a class="nav-item" id="nav-deploy" onclick="navigate('deploy')">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Deployment
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ─── Main ─────────────────────────────────────────────────────── -->
+  <div class="main-wrap">
+
+    <header class="top-bar">
+      <nav class="breadcrumb" id="breadcrumb">
+        <span>Voice NLP</span>
+        <span class="sep">/</span>
+        <span>Overview</span>
+      </nav>
+      <div class="top-bar-right">
+        <button class="theme-btn" onclick="toggleTheme()">
+          <svg id="themeIcon" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span id="themeLabel">Light</span>
+        </button>
+        <a class="github-btn" href="#" onclick="return false;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </header>
+
+    <div class="content-wrap">
+      <main class="content">
+
+        <!-- ═══════════════════════════════════════════ OVERVIEW ═════ -->
+        <section class="section visible" id="sec-overview">
+          <div class="hero-banner">
+            <div class="hero-icon">🎙️</div>
+            <div>
+              <div class="hero-title">Voice NLP Service</div>
+              <div class="hero-sub">A generic, schema-driven microservice that converts audio to structured JSON.<br>Send any audio file + a field schema, get back typed, normalized data.</div>
+            </div>
+            <div class="hero-version">v1.0.0</div>
+          </div>
+
+          <p class="lead">Built on <strong>OpenAI Whisper</strong> for multilingual transcription and <strong>Ollama / llama3.2:3b</strong> for intent extraction. One service, infinite use cases — the schema travels with each request.</p>
+
+          <h2 id="ov-how">How it works</h2>
+          <div class="cards">
+            <div class="card" onclick="navigate('api-transcribe')">
+              <div class="card-icon" style="background:#1A2D1A">🎤</div>
+              <div class="card-title">1. Transcribe</div>
+              <div class="card-desc">Whisper converts audio to text — 99 languages, auto-detected.</div>
+              <div class="card-arrow">→ /v1/transcribe</div>
+            </div>
+            <div class="card" onclick="navigate('api-extract')">
+              <div class="card-icon" style="background:#1A1B3A">🧠</div>
+              <div class="card-title">2. Extract</div>
+              <div class="card-desc">llama3.2:3b maps the text to your JSON schema with zero config.</div>
+              <div class="card-arrow">→ /v1/extract</div>
+            </div>
+            <div class="card" onclick="navigate('api-full')">
+              <div class="card-icon" style="background:#2D1A1A">⚡</div>
+              <div class="card-title">3. Full pipeline</div>
+              <div class="card-desc">One call, audio in, structured JSON out. Ready to feed your API.</div>
+              <div class="card-arrow">→ /v1/voice-to-json</div>
+            </div>
+          </div>
+
+          <h2 id="ov-usecases">Use cases</h2>
+          <p>The service is fully agnostic — <strong>you define what to extract</strong>. The same deployment serves all your apps:</p>
+          <ul>
+            <li><strong>Transport app</strong> — extract departure city, destination, date, passenger count</li>
+            <li><strong>E-commerce</strong> — extract product name, quantity, color, size from voice orders</li>
+            <li><strong>HR platform</strong> — parse leave request type, start date, end date</li>
+            <li><strong>Food delivery</strong> — extract dish name, quantity, customizations, delivery address</li>
+            <li><strong>Any app</strong> — define a schema, call the endpoint, done</li>
+          </ul>
+
+          <h2 id="ov-design">Design principles</h2>
+          <ul>
+            <li><strong>Schema-as-payload</strong> — no app registration, no server-side config per client</li>
+            <li><strong>Stateless</strong> — every request is self-contained</li>
+            <li><strong>Pluggable</strong> — swap Whisper model size or Ollama model via env vars</li>
+            <li><strong>CPU-friendly</strong> — runs without GPU on <code>small</code> Whisper + llama3.2:3b</li>
+            <li><strong>Optional auth</strong> — API key middleware, disabled by default</li>
+          </ul>
+
+          <div class="page-nav">
+            <div></div>
+            <a class="page-nav-btn next" onclick="navigate('quickstart')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">Quickstart →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ QUICKSTART ═══ -->
+        <section class="section" id="sec-quickstart">
+          <h1>Quickstart</h1>
+          <p class="lead">From zero to a working voice-to-JSON call in under 5 minutes.</p>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">Clone &amp; configure</div>
+                <div class="code-block">
+                  <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                  <pre>cd services/voice-nlp
+cp .env.example .env</pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">Start containers</div>
+                <div class="code-block">
+                  <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                  <pre>docker-compose up -d</pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">Pull the LLM (one-time, ~2 GB)</div>
+                <div class="code-block">
+                  <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                  <pre>docker exec -it voice-nlp-ollama-1 ollama pull llama3.2:3b</pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">Make your first call</div>
+                <p>Test the text extraction endpoint (no audio file needed):</p>
+                <div class="code-block">
+                  <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                  <pre>curl -X POST http://localhost:8100/v1/extract \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Je veux aller à Ziguinchor depuis Dakar demain matin",
+    "today": "2026-05-04",
+    "schema": {
+      "context": "Transport app in Senegal",
+      "fields": [
+        {"name": "origin_city",      "type": "string",  "description": "Departure city",   "required": true},
+        {"name": "destination_city", "type": "string",  "description": "Arrival city",     "required": true},
+        {"name": "date",             "type": "date",    "description": "Travel date",       "required": false}
+      ]
+    }
+  }'</pre>
+                </div>
+
+                <p>Expected response:</p>
+                <div class="code-block">
+                  <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                  <pre>{
+  <span class="t-key">"extracted"</span>: {
+    <span class="t-key">"origin_city"</span>:      <span class="t-str">"Dakar"</span>,
+    <span class="t-key">"destination_city"</span>: <span class="t-str">"Ziguinchor"</span>,
+    <span class="t-key">"date"</span>:             <span class="t-str">"2026-05-05"</span>
+  },
+  <span class="t-key">"missing_fields"</span>: [],
+  <span class="t-key">"confidence"</span>: <span class="t-num">0.95</span>,
+  <span class="t-key">"raw_text"</span>: <span class="t-str">"Je veux aller à Ziguinchor depuis Dakar demain matin"</span>
+}</pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">5</div>
+              <div class="step-body">
+                <div class="step-title">Explore the interactive docs</div>
+                <p>Open <a href="http://localhost:8100/docs" target="_blank">http://localhost:8100/docs</a> for the live Swagger UI.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('overview')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← Overview</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('installation')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">Installation →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ INSTALLATION ═ -->
+        <section class="section" id="sec-installation">
+          <h1>Installation</h1>
+          <p class="lead">The service ships as a Docker Compose stack containing two containers: the FastAPI app and an Ollama instance.</p>
+
+          <h2 id="inst-req">Requirements</h2>
+          <table class="param-table">
+            <thead><tr><th>Component</th><th>Minimum</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Docker</strong></td><td>24+</td><td>Docker Compose v2 included</td></tr>
+              <tr><td><strong>RAM</strong></td><td>4 GB</td><td>2 GB for llama3.2:3b + 1 GB for Whisper small</td></tr>
+              <tr><td><strong>Disk</strong></td><td>6 GB</td><td>~2 GB model + ~1 GB image + ~3 GB Whisper</td></tr>
+              <tr><td><strong>GPU</strong></td><td>Optional</td><td>Set <code>WHISPER_DEVICE=cuda</code> for 5× speedup</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="inst-docker">Docker Compose (recommended)</h2>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">yaml — docker-compose.yml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>services:
+  voice-nlp:
+    build: .
+    ports:
+      - <span class="t-str">"8100:8000"</span>
+    env_file: .env
+    depends_on:
+      - ollama
+    volumes:
+      - whisper-cache:/root/.cache/whisper
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - <span class="t-str">"11434:11434"</span>
+    volumes:
+      - ollama-data:/root/.ollama
+
+volumes:
+  whisper-cache:
+  ollama-data:</pre>
+          </div>
+
+          <h2 id="inst-local">Local (without Docker)</h2>
+          <div class="callout warn">
+            <span class="callout-icon">⚠️</span>
+            <div class="callout-body"><strong>ffmpeg required.</strong> Whisper depends on ffmpeg for audio decoding. Install it before running locally.</div>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="t-cm"># Install ffmpeg (Ubuntu/Debian)</span>
+sudo apt-get install ffmpeg
+
+<span class="t-cm"># Create virtualenv</span>
+python -m venv .venv && source .venv/bin/activate
+
+<span class="t-cm"># Install dependencies</span>
+pip install -r requirements.txt
+
+<span class="t-cm"># Start Ollama separately, then run the service</span>
+ollama serve &
+uvicorn app.main:app --host 0.0.0.0 --port 8100 --reload</pre>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('quickstart')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← Quickstart</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('schema')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">Extraction Schema →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ SCHEMA ════════ -->
+        <section class="section" id="sec-schema">
+          <h1>Extraction Schema</h1>
+          <p class="lead">The schema is the core abstraction that makes the service generic. You pass it with every request — no server-side registration required.</p>
+
+          <h2 id="schema-shape">Schema shape</h2>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">typescript</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="t-kw">interface</span> <span class="t-fn">ExtractionSchema</span> {
+  context:  <span class="t-str">string</span>          <span class="t-cm">// What this app does — shapes LLM behavior</span>
+  fields:   <span class="t-fn">SchemaField</span>[]   <span class="t-cm">// Fields to extract</span>
+  hints?:   <span class="t-str">string</span>[]        <span class="t-cm">// Domain hints (city names, product catalog…)</span>
+}
+
+<span class="t-kw">interface</span> <span class="t-fn">SchemaField</span> {
+  name:         <span class="t-str">string</span>
+  type:         <span class="t-str">"string"</span> | <span class="t-str">"integer"</span> | <span class="t-str">"float"</span> | <span class="t-str">"boolean"</span> | <span class="t-str">"date"</span> | <span class="t-str">"datetime"</span> | <span class="t-str">"enum"</span>
+  description:  <span class="t-str">string</span>      <span class="t-cm">// Sent to the LLM — be precise</span>
+  required:     <span class="t-bool">boolean</span>     <span class="t-cm">// Missing required fields appear in missing_fields[]</span>
+  enum_values?: <span class="t-str">string</span>[]   <span class="t-cm">// Only when type === "enum"</span>
+}</pre>
+          </div>
+
+          <h2 id="schema-types">Field types</h2>
+          <table class="param-table">
+            <thead><tr><th>Type</th><th>Output format</th><th>Example input</th><th>Example output</th></tr></thead>
+            <tbody>
+              <tr><td><span class="chip">string</span></td><td>Any string</td><td>"Dakar"</td><td><code>"Dakar"</code></td></tr>
+              <tr><td><span class="chip">integer</span></td><td>Whole number</td><td>"two passengers"</td><td><code>2</code></td></tr>
+              <tr><td><span class="chip">float</span></td><td>Decimal number</td><td>"one and a half kilos"</td><td><code>1.5</code></td></tr>
+              <tr><td><span class="chip">boolean</span></td><td>true / false</td><td>"with air conditioning"</td><td><code>true</code></td></tr>
+              <tr><td><span class="chip">date</span></td><td>YYYY-MM-DD</td><td>"tomorrow", "next Friday", "le 5 mai"</td><td><code>"2026-05-05"</code></td></tr>
+              <tr><td><span class="chip">datetime</span></td><td>ISO 8601</td><td>"tomorrow at 8am"</td><td><code>"2026-05-05T08:00:00"</code></td></tr>
+              <tr><td><span class="chip">enum</span></td><td>One of enum_values</td><td>"by bus"</td><td><code>"bus"</code></td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="schema-hints">Using hints effectively</h2>
+          <p>Hints are injected into the system prompt verbatim. Use them to help the LLM recognize domain-specific terms it might not know:</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>{
+  <span class="t-key">"hints"</span>: [
+    <span class="t-str">"Senegalese cities: Dakar, Thiès, Ziguinchor, Saint-Louis, Kaolack, Touba, Mbour, Tambacounda, Kolda"</span>,
+    <span class="t-str">"'sept-place' is a shared taxi service (7-seat sedan)"</span>,
+    <span class="t-str">"'car rapide' is a local minibus"</span>
+  ]
+}</pre>
+          </div>
+
+          <div class="callout tip">
+            <span class="callout-icon">💡</span>
+            <div class="callout-body"><strong>Tip:</strong> The <code>context</code> field is the single most impactful parameter. A specific context like <em>"Senegalese intercity bus booking app"</em> yields far better results than a generic one like <em>"transport app"</em>.</div>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('installation')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← Installation</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('pipeline')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">Pipeline →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ PIPELINE ══════ -->
+        <section class="section" id="sec-pipeline">
+          <h1>Pipeline</h1>
+          <p class="lead">Understanding the two-stage process helps you choose the right endpoint and handle ambiguity correctly.</p>
+
+          <h2 id="pipe-stages">Stages</h2>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">text</span></div>
+            <pre>Audio file (.wav / .mp3 / .ogg / .m4a)
+    │
+    ▼  [Stage 1 — Whisper ASR]
+    │  Model: configurable (tiny → large-v3)
+    │  Auto-detects language
+    │  Output: raw transcription text + language code
+    │
+    ▼  [Stage 2 — Ollama llama3.2:3b]
+    │  Reads your ExtractionSchema
+    │  Resolves relative dates using today param
+    │  Output: typed JSON + missing_fields[] + confidence
+    │
+    ▼  PipelineResponse
+       { transcription: {...}, extraction: {...} }</pre>
+          </div>
+
+          <h2 id="pipe-missing">Handling missing fields</h2>
+          <p>When a required field is absent from the audio, <code>missing_fields</code> lists its name. Your app should prompt the user to re-record with a targeted question:</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">php — Laravel example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="t-kw">if</span> (!<span class="t-fn">empty</span>($response[<span class="t-str">'extraction'</span>][<span class="t-str">'missing_fields'</span>])) {
+    <span class="t-kw">return</span> <span class="t-fn">response</span>()-><span class="t-fn">json</span>([
+        <span class="t-str">'status'</span>         => <span class="t-str">'needs_clarification'</span>,
+        <span class="t-str">'missing_fields'</span> => $response[<span class="t-str">'extraction'</span>][<span class="t-str">'missing_fields'</span>],
+    ], <span class="t-num">422</span>);
+}</pre>
+          </div>
+
+          <div class="callout tip">
+            <span class="callout-icon">💡</span>
+            <div class="callout-body"><strong>Confidence threshold:</strong> Reject extractions below <code>0.6</code> confidence and ask the user to repeat. Values above <code>0.85</code> are generally reliable for structured fields.</div>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('schema')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← Extraction Schema</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('api-transcribe')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">API Reference →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ API: TRANSCRIBE -->
+        <section class="section" id="sec-api-transcribe">
+          <h1>API Reference</h1>
+
+          <div class="endpoint-block">
+            <div class="endpoint-header">
+              <span class="method-tag method-post">POST</span>
+              <span class="endpoint-path">/v1/transcribe</span>
+              <span class="endpoint-desc">Audio → text</span>
+            </div>
+            <div class="endpoint-body">
+              <p>Transcribes an audio file using Whisper. Returns the raw text and detected language. Use this when you only need transcription without extraction.</p>
+
+              <h3>Request</h3>
+              <p>Content-Type: <code>multipart/form-data</code></p>
+              <table class="param-table">
+                <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>audio</code></td><td><span class="chip">File</span></td><td><span class="badge-req">required</span></td><td>Audio file. Supports .wav, .mp3, .ogg, .m4a, .flac, .webm</td></tr>
+                </tbody>
+              </table>
+
+              <h3>Response <code>200</code></h3>
+              <div class="code-block">
+                <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                <pre>{
+  <span class="t-key">"text"</span>:             <span class="t-str">"Je veux aller à Ziguinchor depuis Dakar demain matin"</span>,
+  <span class="t-key">"language"</span>:         <span class="t-str">"fr"</span>,
+  <span class="t-key">"confidence"</span>:       <span class="t-num">null</span>,
+  <span class="t-key">"duration_seconds"</span>: <span class="t-num">4.2</span>
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('pipeline')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← Pipeline</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('api-extract')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">POST /v1/extract →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ API: EXTRACT ══ -->
+        <section class="section" id="sec-api-extract">
+          <div class="endpoint-block">
+            <div class="endpoint-header">
+              <span class="method-tag method-post">POST</span>
+              <span class="endpoint-path">/v1/extract</span>
+              <span class="endpoint-desc">Text + schema → JSON</span>
+            </div>
+            <div class="endpoint-body">
+              <p>Extracts structured data from plain text using Ollama. Use this when you already have text (e.g. from a keyboard input or a previous transcription).</p>
+
+              <h3>Request</h3>
+              <p>Content-Type: <code>application/json</code></p>
+              <table class="param-table">
+                <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>text</code></td><td><span class="chip">string</span></td><td><span class="badge-req">required</span></td><td>The text to extract from</td></tr>
+                  <tr><td><code>schema</code></td><td><span class="chip">ExtractionSchema</span></td><td><span class="badge-req">required</span></td><td>Fields to extract — see <a onclick="navigate('schema')">Schema guide</a></td></tr>
+                  <tr><td><code>today</code></td><td><span class="chip">string (YYYY-MM-DD)</span></td><td><span class="badge-opt">optional</span></td><td>Reference date for relative date resolution. Defaults to server date.</td></tr>
+                </tbody>
+              </table>
+
+              <h3>Response <code>200</code></h3>
+              <div class="code-block">
+                <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                <pre>{
+  <span class="t-key">"extracted"</span>: {
+    <span class="t-key">"origin_city"</span>:      <span class="t-str">"Dakar"</span>,
+    <span class="t-key">"destination_city"</span>: <span class="t-str">"Ziguinchor"</span>,
+    <span class="t-key">"date"</span>:             <span class="t-str">"2026-05-05"</span>,
+    <span class="t-key">"passenger_count"</span>:  <span class="t-num">null</span>
+  },
+  <span class="t-key">"missing_fields"</span>: [],
+  <span class="t-key">"confidence"</span>: <span class="t-num">0.94</span>,
+  <span class="t-key">"raw_text"</span>: <span class="t-str">"Je veux aller à Ziguinchor depuis Dakar demain matin"</span>
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('api-transcribe')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← POST /v1/transcribe</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('api-full')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">POST /v1/voice-to-json →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ API: PIPELINE ═ -->
+        <section class="section" id="sec-api-full">
+          <div class="endpoint-block">
+            <div class="endpoint-header">
+              <span class="method-tag method-post">POST</span>
+              <span class="endpoint-path">/v1/voice-to-json</span>
+              <span class="endpoint-desc">Audio + schema → structured JSON</span>
+            </div>
+            <div class="endpoint-body">
+              <p>The full pipeline in a single call. Transcribes the audio with Whisper then extracts structured data with Ollama. <strong>This is the primary endpoint</strong> for client apps.</p>
+
+              <h3>Request</h3>
+              <p>Content-Type: <code>multipart/form-data</code></p>
+              <table class="param-table">
+                <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>audio</code></td><td><span class="chip">File</span></td><td><span class="badge-req">required</span></td><td>Audio file</td></tr>
+                  <tr><td><code>schema</code></td><td><span class="chip">string (JSON)</span></td><td><span class="badge-req">required</span></td><td>JSON-encoded ExtractionSchema</td></tr>
+                  <tr><td><code>today</code></td><td><span class="chip">string</span></td><td><span class="badge-opt">optional</span></td><td>ISO date for relative date resolution</td></tr>
+                </tbody>
+              </table>
+
+              <div class="callout warn">
+                <span class="callout-icon">⚠️</span>
+                <div class="callout-body">The <code>schema</code> field is a <strong>JSON-encoded string</strong> (not a nested object) because the request uses <code>multipart/form-data</code>. Serialize your schema with <code>JSON.stringify()</code> or <code>json_encode()</code> before sending.</div>
+              </div>
+
+              <h3>cURL example</h3>
+              <div class="code-block">
+                <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                <pre>curl -X POST http://localhost:8100/v1/voice-to-json \
+  -F "audio=@recording.wav" \
+  -F 'schema={"context":"Transport app","fields":[{"name":"origin_city","type":"string","description":"Departure city","required":true},{"name":"destination_city","type":"string","description":"Arrival city","required":true},{"name":"date","type":"date","description":"Travel date","required":false}]}' \
+  -F "today=2026-05-04"</pre>
+              </div>
+
+              <h3>Response <code>200</code></h3>
+              <div class="code-block">
+                <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                <pre>{
+  <span class="t-key">"transcription"</span>: {
+    <span class="t-key">"text"</span>:             <span class="t-str">"Je veux aller à Ziguinchor depuis Dakar demain matin"</span>,
+    <span class="t-key">"language"</span>:         <span class="t-str">"fr"</span>,
+    <span class="t-key">"duration_seconds"</span>: <span class="t-num">4.2</span>
+  },
+  <span class="t-key">"extraction"</span>: {
+    <span class="t-key">"extracted"</span>: {
+      <span class="t-key">"origin_city"</span>:      <span class="t-str">"Dakar"</span>,
+      <span class="t-key">"destination_city"</span>: <span class="t-str">"Ziguinchor"</span>,
+      <span class="t-key">"date"</span>:             <span class="t-str">"2026-05-05"</span>
+    },
+    <span class="t-key">"missing_fields"</span>: [],
+    <span class="t-key">"confidence"</span>: <span class="t-num">0.94</span>,
+    <span class="t-key">"raw_text"</span>: <span class="t-str">"Je veux aller à Ziguinchor depuis Dakar demain matin"</span>
+  }
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('api-extract')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← POST /v1/extract</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('api-health')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">GET /health →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ API: HEALTH ═══ -->
+        <section class="section" id="sec-api-health">
+          <div class="endpoint-block">
+            <div class="endpoint-header">
+              <span class="method-tag method-get">GET</span>
+              <span class="endpoint-path">/health</span>
+              <span class="endpoint-desc">Service liveness check</span>
+            </div>
+            <div class="endpoint-body">
+              <p>Returns the current status of the service and the configured model names. Use this endpoint for Docker healthchecks and uptime monitoring.</p>
+              <h3>Response <code>200</code></h3>
+              <div class="code-block">
+                <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                <pre>{
+  <span class="t-key">"status"</span>:        <span class="t-str">"ok"</span>,
+  <span class="t-key">"whisper_model"</span>: <span class="t-str">"small"</span>,
+  <span class="t-key">"ollama_model"</span>:  <span class="t-str">"llama3.2:3b"</span>
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('api-full')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← POST /v1/voice-to-json</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('ex-transport')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">Examples →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ EX: TRANSPORT ═ -->
+        <section class="section" id="sec-ex-transport">
+          <h1>Example — Transport (Faypass)</h1>
+          <p class="lead">Searching for intercity bus trips by voice in French and Wolof.</p>
+
+          <h2 id="ex-t-schema">Schema</h2>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">json</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>{
+  <span class="t-key">"context"</span>: <span class="t-str">"Senegalese intercity transport booking app"</span>,
+  <span class="t-key">"fields"</span>: [
+    { <span class="t-key">"name"</span>: <span class="t-str">"origin_city"</span>,      <span class="t-key">"type"</span>: <span class="t-str">"string"</span>,  <span class="t-key">"description"</span>: <span class="t-str">"Departure city"</span>,    <span class="t-key">"required"</span>: <span class="t-bool">true</span> },
+    { <span class="t-key">"name"</span>: <span class="t-str">"destination_city"</span>, <span class="t-key">"type"</span>: <span class="t-str">"string"</span>,  <span class="t-key">"description"</span>: <span class="t-str">"Arrival city"</span>,      <span class="t-key">"required"</span>: <span class="t-bool">true</span> },
+    { <span class="t-key">"name"</span>: <span class="t-str">"date"</span>,             <span class="t-key">"type"</span>: <span class="t-str">"date"</span>,    <span class="t-key">"description"</span>: <span class="t-str">"Travel date"</span>,       <span class="t-key">"required"</span>: <span class="t-bool">false</span> },
+    { <span class="t-key">"name"</span>: <span class="t-str">"passenger_count"</span>,  <span class="t-key">"type"</span>: <span class="t-str">"integer"</span>, <span class="t-key">"description"</span>: <span class="t-str">"Number of seats"</span>,   <span class="t-key">"required"</span>: <span class="t-bool">false</span> },
+    { <span class="t-key">"name"</span>: <span class="t-str">"service_type"</span>,     <span class="t-key">"type"</span>: <span class="t-str">"enum"</span>,   <span class="t-key">"description"</span>: <span class="t-str">"Vehicle type"</span>,      <span class="t-key">"required"</span>: <span class="t-bool">false</span>,
+      <span class="t-key">"enum_values"</span>: [<span class="t-str">"bus"</span>, <span class="t-str">"minibus"</span>, <span class="t-str">"sept-place"</span>] }
+  ],
+  <span class="t-key">"hints"</span>: [
+    <span class="t-str">"Senegalese cities: Dakar, Thiès, Ziguinchor, Saint-Louis, Kaolack, Touba, Mbour, Tambacounda, Kolda, Diourbel"</span>,
+    <span class="t-str">"'sept-place' is a shared 7-seat sedan taxi"</span>
+  ]
+}</pre>
+          </div>
+
+          <h2 id="ex-t-inputs">Test inputs</h2>
+          <table class="param-table">
+            <thead><tr><th>Input text</th><th>Expected output</th></tr></thead>
+            <tbody>
+              <tr><td>"Je veux aller à Ziguinchor depuis Dakar demain matin pour deux personnes"</td><td><code>origin_city: "Dakar"</code>, <code>destination_city: "Ziguinchor"</code>, <code>date: tomorrow</code>, <code>passenger_count: 2</code></td></tr>
+              <tr><td>"Dakar Thiès yoon bi tey" (Wolof: Dakar Thiès trip today)</td><td><code>origin_city: "Dakar"</code>, <code>destination_city: "Thiès"</code>, <code>date: today</code></td></tr>
+              <tr><td>"Bus Kaolack vendredi"</td><td><code>destination_city: "Kaolack"</code>, <code>date: next Friday</code>, <code>service_type: "bus"</code>, <code>missing_fields: ["origin_city"]</code></td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="ex-t-laravel">Laravel integration</h2>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">php — VoiceSearchController.php</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="t-kw">public function</span> <span class="t-fn">search</span>(Request $request): JsonResponse
+{
+    $schema = [
+        <span class="t-str">'context'</span> => <span class="t-str">'Senegalese intercity transport booking app'</span>,
+        <span class="t-str">'fields'</span>  => [
+            [<span class="t-str">'name'</span> => <span class="t-str">'origin_city'</span>,      <span class="t-str">'type'</span> => <span class="t-str">'string'</span>,  <span class="t-str">'description'</span> => <span class="t-str">'Departure city'</span>,   <span class="t-str">'required'</span> => <span class="t-bool">true</span>],
+            [<span class="t-str">'name'</span> => <span class="t-str">'destination_city'</span>, <span class="t-str">'type'</span> => <span class="t-str">'string'</span>,  <span class="t-str">'description'</span> => <span class="t-str">'Arrival city'</span>,     <span class="t-str">'required'</span> => <span class="t-bool">true</span>],
+            [<span class="t-str">'name'</span> => <span class="t-str">'date'</span>,             <span class="t-str">'type'</span> => <span class="t-str">'date'</span>,    <span class="t-str">'description'</span> => <span class="t-str">'Travel date'</span>,      <span class="t-str">'required'</span> => <span class="t-bool">false</span>],
+        ],
+        <span class="t-str">'hints'</span> => [<span class="t-str">'Senegalese cities: Dakar, Thiès, Ziguinchor, Saint-Louis, Kaolack'</span>],
+    ];
+
+    $nlp = <span class="t-fn">Http</span>::<span class="t-fn">post</span>(<span class="t-fn">config</span>(<span class="t-str">'services.voice_nlp.url'</span>) . <span class="t-str">'/v1/extract'</span>, [
+        <span class="t-str">'text'</span>  => $request-><span class="t-fn">input</span>(<span class="t-str">'text'</span>),
+        <span class="t-str">'today'</span> => <span class="t-fn">now</span>()-><span class="t-fn">toDateString</span>(),
+        <span class="t-str">'schema'</span> => $schema,
+    ]);
+
+    $intent = $nlp-><span class="t-fn">json</span>();
+
+    <span class="t-kw">if</span> (!<span class="t-fn">empty</span>($intent[<span class="t-str">'missing_fields'</span>])) {
+        <span class="t-kw">return</span> <span class="t-fn">response</span>()-><span class="t-fn">json</span>([
+            <span class="t-str">'status'</span>         => <span class="t-str">'needs_clarification'</span>,
+            <span class="t-str">'missing_fields'</span> => $intent[<span class="t-str">'missing_fields'</span>],
+        ], <span class="t-num">422</span>);
+    }
+
+    <span class="t-kw">return</span> $this->tripRepository-><span class="t-fn">publicSearchQuery</span>(
+        originCity:      $intent[<span class="t-str">'extracted'</span>][<span class="t-str">'origin_city'</span>],
+        destinationCity: $intent[<span class="t-str">'extracted'</span>][<span class="t-str">'destination_city'</span>],
+        date:            $intent[<span class="t-str">'extracted'</span>][<span class="t-str">'date'</span>],
+    );
+}</pre>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('api-health')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← GET /health</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('ex-ecommerce')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">E-commerce Example →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ EX: E-COMMERCE  -->
+        <section class="section" id="sec-ex-ecommerce">
+          <h1>Example — E-commerce</h1>
+          <p class="lead">Place a product order by voice.</p>
+
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">json — Schema</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>{
+  <span class="t-key">"context"</span>: <span class="t-str">"E-commerce platform where customers order products by voice"</span>,
+  <span class="t-key">"fields"</span>: [
+    { <span class="t-key">"name"</span>: <span class="t-str">"product"</span>,  <span class="t-key">"type"</span>: <span class="t-str">"string"</span>,  <span class="t-key">"description"</span>: <span class="t-str">"Product name or description"</span>, <span class="t-key">"required"</span>: <span class="t-bool">true</span>  },
+    { <span class="t-key">"name"</span>: <span class="t-str">"quantity"</span>, <span class="t-key">"type"</span>: <span class="t-str">"integer"</span>, <span class="t-key">"description"</span>: <span class="t-str">"Quantity to order"</span>,          <span class="t-key">"required"</span>: <span class="t-bool">false</span> },
+    { <span class="t-key">"name"</span>: <span class="t-str">"color"</span>,    <span class="t-key">"type"</span>: <span class="t-str">"string"</span>,  <span class="t-key">"description"</span>: <span class="t-str">"Color preference"</span>,           <span class="t-key">"required"</span>: <span class="t-bool">false</span> },
+    { <span class="t-key">"name"</span>: <span class="t-str">"size"</span>,     <span class="t-key">"type"</span>: <span class="t-str">"enum"</span>,   <span class="t-key">"description"</span>: <span class="t-str">"Clothing size"</span>,              <span class="t-key">"required"</span>: <span class="t-bool">false</span>,
+      <span class="t-key">"enum_values"</span>: [<span class="t-str">"XS"</span>, <span class="t-str">"S"</span>, <span class="t-str">"M"</span>, <span class="t-str">"L"</span>, <span class="t-str">"XL"</span>, <span class="t-str">"XXL"</span>] }
+  ]
+}</pre>
+          </div>
+
+          <table class="param-table">
+            <thead><tr><th>Input</th><th>Extracted</th></tr></thead>
+            <tbody>
+              <tr><td>"Two blue T-shirts in large"</td><td><code>product: "T-shirt"</code>, <code>quantity: 2</code>, <code>color: "blue"</code>, <code>size: "L"</code></td></tr>
+              <tr><td>"Je veux commander un jean taille M"</td><td><code>product: "jean"</code>, <code>quantity: 1</code>, <code>size: "M"</code></td></tr>
+            </tbody>
+          </table>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('ex-transport')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← Transport Example</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('ex-hr')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">HR Example →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ EX: HR ════════ -->
+        <section class="section" id="sec-ex-hr">
+          <h1>Example — HR Leave Request</h1>
+          <p class="lead">Submit a leave request by speaking naturally.</p>
+
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">json — Schema</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>{
+  <span class="t-key">"context"</span>: <span class="t-str">"HR management platform for employee leave requests"</span>,
+  <span class="t-key">"fields"</span>: [
+    { <span class="t-key">"name"</span>: <span class="t-str">"leave_type"</span>, <span class="t-key">"type"</span>: <span class="t-str">"enum"</span>,   <span class="t-key">"description"</span>: <span class="t-str">"Type of leave"</span>,  <span class="t-key">"required"</span>: <span class="t-bool">true</span>,
+      <span class="t-key">"enum_values"</span>: [<span class="t-str">"annual"</span>, <span class="t-str">"sick"</span>, <span class="t-str">"unpaid"</span>, <span class="t-str">"maternity"</span>, <span class="t-str">"paternity"</span>] },
+    { <span class="t-key">"name"</span>: <span class="t-str">"start_date"</span>, <span class="t-key">"type"</span>: <span class="t-str">"date"</span>,    <span class="t-key">"description"</span>: <span class="t-str">"First day off"</span>,  <span class="t-key">"required"</span>: <span class="t-bool">true</span>  },
+    { <span class="t-key">"name"</span>: <span class="t-str">"end_date"</span>,   <span class="t-key">"type"</span>: <span class="t-str">"date"</span>,    <span class="t-key">"description"</span>: <span class="t-str">"Last day off"</span>,   <span class="t-key">"required"</span>: <span class="t-bool">true</span>  },
+    { <span class="t-key">"name"</span>: <span class="t-str">"reason"</span>,     <span class="t-key">"type"</span>: <span class="t-str">"string"</span>,  <span class="t-key">"description"</span>: <span class="t-str">"Reason (optional)"</span>, <span class="t-key">"required"</span>: <span class="t-bool">false</span> }
+  ]
+}</pre>
+          </div>
+
+          <table class="param-table">
+            <thead><tr><th>Input</th><th>Extracted</th></tr></thead>
+            <tbody>
+              <tr><td>"I need sick leave from Monday to Wednesday"</td><td><code>leave_type: "sick"</code>, <code>start_date: next Monday</code>, <code>end_date: next Wednesday</code></td></tr>
+              <tr><td>"Je prends des congés annuels du 10 au 20 juin"</td><td><code>leave_type: "annual"</code>, <code>start_date: "2026-06-10"</code>, <code>end_date: "2026-06-20"</code></td></tr>
+            </tbody>
+          </table>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('ex-ecommerce')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← E-commerce Example</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('config')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">Configuration →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ CONFIG ════════ -->
+        <section class="section" id="sec-config">
+          <h1>Environment Configuration</h1>
+          <p class="lead">All settings are controlled via environment variables or a <code>.env</code> file in the service root.</p>
+
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">env — .env.example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>WHISPER_MODEL=small
+WHISPER_DEVICE=cpu
+OLLAMA_BASE_URL=http://ollama:11434
+OLLAMA_MODEL=llama3.2:3b
+OLLAMA_TIMEOUT=30
+API_KEYS=
+MAX_AUDIO_DURATION_SECONDS=120
+LOG_LEVEL=INFO</pre>
+          </div>
+
+          <table class="param-table">
+            <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>WHISPER_MODEL</code></td><td><code>small</code></td><td>Whisper model size: <code>tiny</code> (fast) → <code>large-v3</code> (accurate). <code>small</code> is the recommended balance for CPU.</td></tr>
+              <tr><td><code>WHISPER_DEVICE</code></td><td><code>cpu</code></td><td>Set to <code>cuda</code> to use an NVIDIA GPU. Requires nvidia-docker runtime.</td></tr>
+              <tr><td><code>OLLAMA_BASE_URL</code></td><td><code>http://ollama:11434</code></td><td>Ollama server URL. Use <code>http://localhost:11434</code> for local dev without Docker.</td></tr>
+              <tr><td><code>OLLAMA_MODEL</code></td><td><code>llama3.2:3b</code></td><td>Ollama model to use for extraction. Upgrade to <code>mistral:7b</code> for better accuracy.</td></tr>
+              <tr><td><code>OLLAMA_TIMEOUT</code></td><td><code>30</code></td><td>HTTP timeout (seconds) for Ollama requests.</td></tr>
+              <tr><td><code>API_KEYS</code></td><td><em>empty</em></td><td>Comma-separated list of valid API keys. Empty = no authentication.</td></tr>
+              <tr><td><code>MAX_AUDIO_DURATION_SECONDS</code></td><td><code>120</code></td><td>Maximum audio file duration accepted.</td></tr>
+              <tr><td><code>LOG_LEVEL</code></td><td><code>INFO</code></td><td><code>DEBUG</code> | <code>INFO</code> | <code>WARNING</code> | <code>ERROR</code></td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="conf-auth">Enabling API key authentication</h2>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">env</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>API_KEYS=my-faypass-key-abc123,my-ecommerce-key-xyz789</pre>
+          </div>
+          <p>Clients must send the key in the <code>X-API-Key</code> header:</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>curl -H "X-API-Key: my-faypass-key-abc123" http://localhost:8100/v1/extract ...</pre>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('ex-hr')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← HR Example</span>
+            </a>
+            <a class="page-nav-btn next" onclick="navigate('deploy')">
+              <span class="page-nav-label">Next</span>
+              <span class="page-nav-title">Deployment →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════ DEPLOY ════════ -->
+        <section class="section" id="sec-deploy">
+          <h1>Deployment</h1>
+          <p class="lead">The service is designed to run as a persistent container alongside your existing stack.</p>
+
+          <h2 id="dep-compose">Adding to an existing Compose stack</h2>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">yaml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="t-cm"># In your main docker-compose.yml</span>
+services:
+  voice-nlp:
+    image: voice-nlp:latest   <span class="t-cm"># build from services/voice-nlp/</span>
+    ports:
+      - <span class="t-str">"8100:8000"</span>
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WHISPER_MODEL=small
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama-data:/root/.ollama</pre>
+          </div>
+
+          <h2 id="dep-healthcheck">Docker healthcheck</h2>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">yaml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>healthcheck:
+  test: [<span class="t-str">"CMD"</span>, <span class="t-str">"curl"</span>, <span class="t-str">"-f"</span>, <span class="t-str">"http://localhost:8000/health"</span>]
+  interval: 30s
+  timeout: 10s
+  retries: 3</pre>
+          </div>
+
+          <h2 id="dep-gpu">GPU support</h2>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">yaml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre>services:
+  voice-nlp:
+    environment:
+      - WHISPER_DEVICE=cuda
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]</pre>
+          </div>
+
+          <div class="callout tip">
+            <span class="callout-icon">💡</span>
+            <div class="callout-body"><strong>Model warm-up:</strong> Whisper loads at startup (<code>@app.on_event("startup")</code>), so the first request after deploy doesn't pay the model load penalty. Ollama models load on first inference — expect a ~3s cold start on the first extraction call after Ollama restarts.</div>
+          </div>
+
+          <div class="page-nav">
+            <a class="page-nav-btn" onclick="navigate('config')">
+              <span class="page-nav-label">Previous</span>
+              <span class="page-nav-title">← Configuration</span>
+            </a>
+            <div></div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- ─── Table of Contents ──────────────────────────────────────── -->
+      <aside class="toc" id="toc">
+        <div class="toc-title">On this page</div>
+        <ul class="toc-list" id="tocList"></ul>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ─── Navigation ─────────────────────────────────────────────── */
+  const pages = {
+    'overview':      { section: 'overview',      breadcrumb: 'Overview',              toc: [['ov-how','How it works'],['ov-usecases','Use cases'],['ov-design','Design principles']] },
+    'quickstart':    { section: 'quickstart',    breadcrumb: 'Quickstart',             toc: [] },
+    'installation':  { section: 'installation',  breadcrumb: 'Installation',           toc: [['inst-req','Requirements'],['inst-docker','Docker Compose'],['inst-local','Local']] },
+    'schema':        { section: 'schema',        breadcrumb: 'Extraction Schema',      toc: [['schema-shape','Schema shape'],['schema-types','Field types'],['schema-hints','Hints']] },
+    'pipeline':      { section: 'pipeline',      breadcrumb: 'Pipeline',               toc: [['pipe-stages','Stages'],['pipe-missing','Missing fields']] },
+    'api-transcribe':{ section: 'api-transcribe',breadcrumb: 'POST /v1/transcribe',    toc: [] },
+    'api-extract':   { section: 'api-extract',   breadcrumb: 'POST /v1/extract',       toc: [] },
+    'api-full':      { section: 'api-full',      breadcrumb: 'POST /v1/voice-to-json', toc: [] },
+    'api-health':    { section: 'api-health',    breadcrumb: 'GET /health',            toc: [] },
+    'ex-transport':  { section: 'ex-transport',  breadcrumb: 'Example: Transport',     toc: [['ex-t-schema','Schema'],['ex-t-inputs','Test inputs'],['ex-t-laravel','Laravel integration']] },
+    'ex-ecommerce':  { section: 'ex-ecommerce',  breadcrumb: 'Example: E-commerce',    toc: [] },
+    'ex-hr':         { section: 'ex-hr',         breadcrumb: 'Example: HR',            toc: [] },
+    'config':        { section: 'config',        breadcrumb: 'Configuration',          toc: [['conf-auth','API key auth']] },
+    'deploy':        { section: 'deploy',        breadcrumb: 'Deployment',             toc: [['dep-compose','Compose'],['dep-healthcheck','Healthcheck'],['dep-gpu','GPU']] },
+  };
+
+  let currentPage = 'overview';
+
+  function navigate(page) {
+    const p = pages[page];
+    if (!p) return;
+
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    document.getElementById('sec-' + p.section).classList.add('visible');
+
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + page);
+    if (navEl) navEl.classList.add('active');
+
+    document.getElementById('breadcrumb').innerHTML =
+      `<span>Voice NLP</span><span class="sep">/</span><span>${p.breadcrumb}</span>`;
+
+    const tocList = document.getElementById('tocList');
+    tocList.innerHTML = p.toc.map(([id, label]) =>
+      `<li><a href="#${id}" onclick="scrollTo('${id}')">${label}</a></li>`
+    ).join('');
+
+    currentPage = page;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return false;
+  }
+
+  function scrollTo(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* ─── Theme ──────────────────────────────────────────────────── */
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.dataset.theme === 'dark';
+    html.dataset.theme = isDark ? 'light' : 'dark';
+    document.getElementById('themeLabel').textContent = isDark ? 'Dark' : 'Light';
+    document.getElementById('themeIcon').innerHTML = isDark
+      ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+      : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  }
+
+  /* ─── Copy code ──────────────────────────────────────────────── */
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+    });
+  }
+
+  /* ─── Search ─────────────────────────────────────────────────── */
+  const searchIndex = [
+    { title: 'Overview',               section: 'overview',       icon: '🏠' },
+    { title: 'Quickstart',             section: 'quickstart',     icon: '⚡' },
+    { title: 'Installation',           section: 'installation',   icon: '📦' },
+    { title: 'Extraction Schema',      section: 'schema',         icon: '📋' },
+    { title: 'Field types',            section: 'schema',         icon: '🔤' },
+    { title: 'Pipeline',               section: 'pipeline',       icon: '🔄' },
+    { title: 'POST /v1/transcribe',    section: 'api-transcribe', icon: '🎤' },
+    { title: 'POST /v1/extract',       section: 'api-extract',    icon: '🧠' },
+    { title: 'POST /v1/voice-to-json', section: 'api-full',       icon: '⚡' },
+    { title: 'GET /health',            section: 'api-health',     icon: '💚' },
+    { title: 'Transport (Faypass)',    section: 'ex-transport',   icon: '🚌' },
+    { title: 'E-commerce',             section: 'ex-ecommerce',   icon: '🛒' },
+    { title: 'HR Leave Requests',      section: 'ex-hr',          icon: '👥' },
+    { title: 'Environment variables',  section: 'config',         icon: '⚙️' },
+    { title: 'API key authentication', section: 'config',         icon: '🔑' },
+    { title: 'Docker deployment',      section: 'deploy',         icon: '🐳' },
+    { title: 'GPU support',            section: 'deploy',         icon: '🖥️' },
+  ];
+
+  function openSearch() {
+    document.getElementById('searchOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('searchInput').focus(), 50);
+    filterSearch('');
+  }
+
+  function closeSearch(e) {
+    if (e.target === document.getElementById('searchOverlay')) {
+      document.getElementById('searchOverlay').classList.remove('open');
+      document.getElementById('searchInput').value = '';
+    }
+  }
+
+  function filterSearch(q) {
+    const results = document.getElementById('searchResults');
+    const filtered = q
+      ? searchIndex.filter(i => i.title.toLowerCase().includes(q.toLowerCase()))
+      : searchIndex.slice(0, 8);
+
+    if (!filtered.length) {
+      results.innerHTML = '<div class="search-empty">No results found</div>';
+      return;
+    }
+
+    results.innerHTML = filtered.map(i => `
+      <a class="search-result-item" onclick="navigate('${i.section}'); document.getElementById('searchOverlay').classList.remove('open');">
+        <span class="search-result-icon">${i.icon}</span>
+        <div>
+          <div class="search-result-title">${i.title}</div>
+          <div class="search-result-section">${pages[i.section]?.breadcrumb || ''}</div>
+        </div>
+      </a>`).join('');
+  }
+
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+    if (e.key === 'Escape') document.getElementById('searchOverlay').classList.remove('open');
+  });
+</script>
+</body>
+</html>

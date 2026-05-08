@@ -18,7 +18,8 @@ def _build_system_prompt(schema: ExtractionSchema, today: str | None) -> str:
         elif f.type == FieldType.enum and f.enum_values:
             type_hint = f'one of: {json.dumps(f.enum_values)}'
         req = "REQUIRED" if f.required else "optional"
-        field_lines.append(f'  - "{f.name}" ({type_hint}, {req}): {f.description}')
+        synonyms_hint = f' [also expressed as: {", ".join(f.synonyms)}]' if f.synonyms else ""
+        field_lines.append(f'  - "{f.name}" ({type_hint}, {req}): {f.description}{synonyms_hint}')
 
     hints_section = ""
     if schema.hints:

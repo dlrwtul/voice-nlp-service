@@ -19,6 +19,7 @@ class SchemaField(BaseModel):
     description: str
     required: bool = False
     enum_values: list[str] | None = None  # used when type == "enum"
+    synonyms: list[str] | None = None     # words/phrases the model should map to this field
 
 
 class ExtractionSchema(BaseModel):

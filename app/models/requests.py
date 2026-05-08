@@ -29,7 +29,7 @@ class ExtractionSchema(BaseModel):
 
 class ExtractRequest(BaseModel):
     text: str
-    schema_: ExtractionSchema = Field(..., alias="schema")
+    extraction_schema: ExtractionSchema = Field(..., alias="schema")
     today: str | None = None  # ISO date, for relative date resolution
 
 

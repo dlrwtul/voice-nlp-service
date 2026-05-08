@@ -8,4 +8,4 @@ router = APIRouter(prefix="/v1", tags=["NLP"])
 
 @router.post("/extract", response_model=ExtractResponse)
 async def extract_intent(req: ExtractRequest):
-    return await extract(req.text, req.schema_, req.today)
+    return await extract(req.text, req.extraction_schema, req.today)

@@ -7,10 +7,11 @@ class Settings(BaseSettings):
     whisper_device: str = "cpu"
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.2:3b"
-    ollama_timeout: int = 30
+    ollama_timeout: int = 60
     api_keys: str = ""          # comma-separated, empty = no auth
     max_audio_duration_seconds: int = 120
     log_level: str = "INFO"
+    kokoro_models_dir: str = "/service/models/kokoro"
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

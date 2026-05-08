@@ -1,8 +1,10 @@
+import asyncio
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
-from app.routers import transcribe, extract, pipeline
+from app.routers import dialogue, extract, pipeline, transcribe, tts
 from app.config import get_settings
 from app.services.asr.whisper_service import get_model
+from app.services.tts.kokoro_service import get_kokoro
 import logging
 
 settings = get_settings()
@@ -31,6 +33,8 @@ async def api_key_middleware(request: Request, call_next):
 app.include_router(transcribe.router)
 app.include_router(extract.router)
 app.include_router(pipeline.router)
+app.include_router(dialogue.router)
+app.include_router(tts.router)
 
 
 @app.get("/guide", include_in_schema=False)
@@ -42,6 +46,7 @@ async def serve_docs():
 @app.on_event("startup")
 async def warmup():
     get_model()
+    await asyncio.to_thread(get_kokoro)
 
 
 @app.get("/health")

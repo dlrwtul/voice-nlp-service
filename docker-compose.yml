@@ -8,16 +8,30 @@ services:
       - ollama
     volumes:
       - whisper-cache:/root/.cache/whisper
+      - kokoro-models:/service/models/kokoro
     restart: unless-stopped
 
   ollama:
     image: ollama/ollama:latest
     ports:
       - "11434:11434"
+    environment:
+      - OLLAMA_VULKAN=0
     volumes:
       - ollama-data:/root/.ollama
+    restart: unless-stopped
+
+  tester:
+    build: ./tester
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://voice-nlp:8000
+    depends_on:
+      - voice-nlp
     restart: unless-stopped
 
 volumes:
   whisper-cache:
   ollama-data:
+  kokoro-models:
